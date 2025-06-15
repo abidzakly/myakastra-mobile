@@ -1,0 +1,2 @@
+D:/d3if46-egp-myakastra-main/d3if46-egp-myakastra-main/android/app/.cxx/Debug/1f1t5s72/x86/CMakeFiles/edit_cache.dir
+D:/d3if46-egp-myakastra-main/d3if46-egp-myakastra-main/android/app/.cxx/Debug/1f1t5s72/x86/CMakeFiles/rebuild_cache.dir
