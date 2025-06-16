@@ -12,6 +12,7 @@ import 'package:my_akastra_app/screens/vehicleList_screen.dart';
 import 'package:my_akastra_app/screens/splash_screen.dart';
 import 'package:my_akastra_app/screens/login_screen.dart';
 import 'package:my_akastra_app/screens/main_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'firebase_options.dart';
 
@@ -21,6 +22,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await initializeDateFormatting('id');
+
   print('Firebase berhasil diinisialisasi');
   runApp(const MyApp());
 }
@@ -42,7 +45,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/addVehicle': (context) => const TambahKendaraanScreen(),
-        '/listVehicle': (context) => VehicleListScreen(),
+        '/listVehicle': (context) => const VehicleListScreen(),
         '/accVehicle': (context) => const AccVehicleScreen(),
         '/account': (context) => const AccountScreen(),
         '/profile': (context) => const MyProfileScreen(),

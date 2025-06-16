@@ -41,6 +41,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_launcher_icons: ^0.14.3
   rename: ^3.0.2
+  intl: ^0.20.2
+  equatable: ^2.0.5
 
 dev_dependencies:
   flutter_test:
@@ -80,6 +82,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - assets/
     - assets/logo_akastra.png
     - assets/carousel/carousel1.png
     - assets/carousel/carousel2.png
