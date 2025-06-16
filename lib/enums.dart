@@ -37,14 +37,20 @@ enum ServiceType {
 enum OrderStatus {
   @JsonValue('IN_PROGRESS')
   inProgress(
-    label: 'Servis Berkala',
+    label: 'Proses Pengerjaan',
     value: 'IN_PROGRESS',
   ),
 
   @JsonValue('DONE')
   done(
-    label: 'Body & Cat',
+    label: 'Selesai',
     value: 'DONE',
+  ),
+
+  @JsonValue('WAITING')
+  waiting(
+    label: 'Menunggu',
+    value: 'WAITING',
   );
 
   const OrderStatus({
