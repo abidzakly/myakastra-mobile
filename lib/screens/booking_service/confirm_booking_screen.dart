@@ -169,7 +169,10 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
 
   // Submit booking to Firestore
   Future<void> _submitBooking() async {
+    print('[LOG] Starting _submitBooking()');
+
     if (currentUser == null) {
+      print('[ERROR] User is not authenticated');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('User not authenticated')),
       );
@@ -179,9 +182,12 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
     setState(() {
       _isLoading = true;
     });
+    print('[LOG] Set _isLoading to true');
 
     try {
       final now = DateTime.now();
+      print('[LOG] Current datetime: $now');
+
       final scheduledDateTime = DateTime(
         widget.bookingData.selectedDate!.year,
         widget.bookingData.selectedDate!.month,
@@ -189,16 +195,23 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
         int.parse(widget.bookingData.selectedTime!.label.split(':')[0]),
         int.parse(widget.bookingData.selectedTime!.label.split(':')[1]),
       );
+      print('[LOG] Computed scheduledDateTime: $scheduledDateTime');
+
       final collection = FirebaseFirestore.instance.collection(FirestoreCollection.kOrders);
       final id = collection.doc().id;
+      print('[LOG] Generated Firestore document ID: $id');
+
+      final selectedServiceIds = widget.bookingData.selectedServices!
+          .map((service) => service.id!)
+          .toList();
+      print('[LOG] Selected service IDs: $selectedServiceIds');
+
       final orderData = {
         'id': id,
         'created_at': Timestamp.fromDate(now),
         'issue': widget.bookingData.keluhan ?? '',
         'order_status': 'IN_PROGRESS',
-        'ordered_service_ids': widget.bookingData.selectedServices!
-            .map((service) => service.id!)
-            .toList(),
+        'ordered_service_ids': selectedServiceIds,
         'scheduled_date': Timestamp.fromDate(scheduledDateTime),
         'scheduled_time': widget.bookingData.selectedTime!.label,
         'updated_at': Timestamp.fromDate(now),
@@ -207,7 +220,10 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
         'total_bill': totalPrice,
       };
 
+      print('[LOG] Order data to submit: $orderData');
+
       await collection.doc(id).set(orderData);
+      print('[LOG] Order successfully saved to Firestore');
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -216,9 +232,13 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
             backgroundColor: Colors.green,
           ),
         );
+        print('[LOG] Booking success SnackBar shown');
+
         Navigator.of(context).popUntil((route) => route.isFirst);
+        print('[LOG] Navigated back to first route');
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('[ERROR] Exception occurred: $e on $stackTrace');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -232,9 +252,13 @@ class _ConfirmBookingScreenState extends State<ConfirmBookingScreen> {
         setState(() {
           _isLoading = false;
         });
+        print('[LOG] Set _isLoading to false');
       }
     }
+
+    print('[LOG] _submitBooking() completed');
   }
+
 
   @override
   Widget build(BuildContext context) {

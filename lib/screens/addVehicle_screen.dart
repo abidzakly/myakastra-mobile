@@ -168,6 +168,7 @@ class _TambahKendaraanScreenState extends State<TambahKendaraanScreen> {
                                   ),
                                   child: const Text("Close"),
                                 ),
+                                // Replace the existing save logic in your ElevatedButton onPressed method
                                 ElevatedButton(
                                   onPressed: () async {
                                     // Ambil nilai dari controller dan dropdown
@@ -191,8 +192,13 @@ class _TambahKendaraanScreenState extends State<TambahKendaraanScreen> {
                                       return;
                                     }
                                     try {
+                                      // Create a document reference first
+                                      final docRef = FirebaseFirestore.instance.collection("vehicles").doc();
+                                      final id = docRef.id;
+
                                       // Simpan data kendaraan pada koleksi "vehicles"
-                                      await FirebaseFirestore.instance.collection("vehicles").add({
+                                      await docRef.set({
+                                        "id": id,
                                         "userId": currentUser.uid,
                                         "model": model,
                                         "transmisi": _selectedTransmisi,
@@ -201,6 +207,7 @@ class _TambahKendaraanScreenState extends State<TambahKendaraanScreen> {
                                         "kilometer": kilometer,
                                         "createdAt": FieldValue.serverTimestamp(),
                                       });
+
                                       ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(content: Text("Kendaraan berhasil ditambahkan")),
                                       );
