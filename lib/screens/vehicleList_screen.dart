@@ -25,6 +25,11 @@ class VehicleListScreen extends StatelessWidget {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
+            // Get keyboard height
+            final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+            final screenHeight = MediaQuery.of(context).size.height;
+            final screenWidth = MediaQuery.of(context).size.width;
+
             return Stack(
               children: [
                 // Efek blur pada background
@@ -36,13 +41,23 @@ class VehicleListScreen extends StatelessWidget {
                   child: Material(
                     color: Colors.transparent,
                     child: Container(
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      width: screenWidth * 0.9,
+                      // Adjust max height based on keyboard visibility
+                      constraints: BoxConstraints(
+                        maxHeight: screenHeight * 0.8 - keyboardHeight,
+                      ),
+                      // Add margin from bottom when keyboard is visible
+                      margin: EdgeInsets.only(
+                        bottom: keyboardHeight > 0 ? keyboardHeight + 20 : 0,
+                      ),
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: SingleChildScrollView(
+                        // Add physics to make scrolling smoother
+                        physics: const BouncingScrollPhysics(),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -173,7 +188,12 @@ class VehicleListScreen extends StatelessWidget {
 
                                     try {
                                       // Simpan data kendaraan ke Firestore
-                                      await FirebaseFirestore.instance.collection("vehicles").add({
+                                      // Create a document reference first
+                                      final docRef = FirebaseFirestore.instance.collection("vehicles").doc();
+                                      final id = docRef.id;
+
+                                      await docRef.set({
+                                        "id": id,
                                         "userId": currentUser.uid,
                                         "model": model,
                                         "transmisi": selectedTransmisi,
@@ -240,6 +260,7 @@ class VehicleListScreen extends StatelessWidget {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser == null) {
       return Scaffold(
+        resizeToAvoidBottomInset: true,
         appBar: const CustomAppBar(title: "Kendaraan Saya"),
         body: const Center(child: Text("User belum login")),
       );
